@@ -6,7 +6,7 @@ const CONFIG = {
     canciones: [
         { nombre: "Married Life", artista: "UP", archivo: "assets/music/Married_Life.mp3" },
         { nombre: "For Youth (방탄소년단)", artista: "BTS", archivo: "assets/music/for youth.mpeg" },
-        { nombre: "Modelito", artista: "Jay Wheeler ft Luister la voz", archivo: "assets/music/Modelito.mpeg" }
+        // { nombre: "Modelito", artista: "Jay Wheeler ft Luister la voz", archivo: "assets/music/Modelito.mpeg" }
     ],
     deseos: [
         "Que sonrías cada día como hoy",
@@ -1495,7 +1495,9 @@ function mostrarModalExito() {
  * SECCIÓN 7: REVELACIÓN FINAL (Opción A - Polaroid con cierre)
  */
 function mostrarRevelacionFinal() {
-    // Crear contenedor de revelación
+    const esMovil = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+    
+    // Crear contenedor
     const revelacionContainer = document.createElement("div");
     revelacionContainer.className = "revelacion-container";
     revelacionContainer.style.cssText = `
@@ -1504,16 +1506,16 @@ function mostrarRevelacionFinal() {
         left: 0;
         width: 100%;
         height: 100%;
-        background: rgba(0, 0, 0, 0.92);
+        background: rgba(0, 0, 0, 0.95);
         backdrop-filter: blur(8px);
-        z-index: 2100;
+        z-index: 9999;
         display: flex;
         align-items: center;
         justify-content: center;
-        animation: fadeInBackdrop 0.5s ease;
+        animation: fadeInBackdrop 0.3s ease;
     `;
     
-    // Botón de cierre en la esquina superior derecha
+    // Botón de cierre
     const closeRevelacionBtn = document.createElement("button");
     closeRevelacionBtn.innerHTML = "✖";
     closeRevelacionBtn.style.cssText = `
@@ -1535,16 +1537,6 @@ function mostrarRevelacionFinal() {
         transition: all 0.3s ease;
         box-shadow: 0 2px 10px rgba(0,0,0,0.2);
     `;
-    closeRevelacionBtn.addEventListener("mouseenter", () => {
-        closeRevelacionBtn.style.transform = "scale(1.05)";
-        closeRevelacionBtn.style.background = "#6c3483";
-        closeRevelacionBtn.style.color = "white";
-    });
-    closeRevelacionBtn.addEventListener("mouseleave", () => {
-        closeRevelacionBtn.style.transform = "scale(1)";
-        closeRevelacionBtn.style.background = "rgba(255,255,255,0.9)";
-        closeRevelacionBtn.style.color = "#6c3483";
-    });
     
     // Polaroid frame
     const polaroid = document.createElement("div");
@@ -1560,7 +1552,7 @@ function mostrarRevelacionFinal() {
         width: 400px;
     `;
     
-    // Contenedor de la imagen/video con efecto de revelado
+    // Contenedor del contenido (imagen o video)
     const contenidoContainer = document.createElement("div");
     contenidoContainer.style.cssText = `
         position: relative;
@@ -1572,7 +1564,41 @@ function mostrarRevelacionFinal() {
         cursor: pointer;
     `;
     
-    // Capa de revelado
+    // ===== POSTER (imagen estática durante la animación) =====
+    const posterImg = document.createElement("img");
+    posterImg.src = "assets/images/poster-video.jpg";
+    posterImg.style.cssText = `
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        position: absolute;
+        top: 0;
+        left: 0;
+        z-index: 1;
+    `;
+    
+    // ===== VIDEO (se crea pero no se reproduce hasta después de la animación) =====
+    const videoFinal = document.createElement("video");
+    videoFinal.className = "video-revelacion";
+    videoFinal.style.cssText = `
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        position: absolute;
+        top: 0;
+        left: 0;
+        opacity: 0;
+        transition: opacity 0.5s ease;
+        z-index: 2;
+    `;
+    
+    // Configuración del video
+    videoFinal.controls = true;
+    videoFinal.playsInline = true;
+    videoFinal.preload = "metadata"; // Solo carga metadatos, no el video completo
+    videoFinal.src = "assets/video/video1.mp4";
+    
+    // ===== CAPA DE REVELADO (animación) =====
     const capaRevelado = document.createElement("div");
     capaRevelado.className = "capa-revelado";
     capaRevelado.style.cssText = `
@@ -1582,7 +1608,7 @@ function mostrarRevelacionFinal() {
         width: 100%;
         height: 100%;
         background: linear-gradient(135deg, #9b59b6, #6c3483);
-        z-index: 2;
+        z-index: 3;
         display: flex;
         align-items: center;
         justify-content: center;
@@ -1601,49 +1627,35 @@ function mostrarRevelacionFinal() {
     textoRevelado.innerHTML = "✨ Revelando momento especial... ✨";
     capaRevelado.appendChild(textoRevelado);
     
-    // Elemento de video
-    const videoFinal = document.createElement("video");
-    videoFinal.className = "video-revelacion";
-    videoFinal.style.cssText = `
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        opacity: 0;
-        transition: opacity 0.5s ease;
-    `;
-    videoFinal.controls = true;
-    videoFinal.playsInline = true;
-    videoFinal.preload = "auto";
-    
-    // VIDEO - CAMBIAR ESTA RUTA POR LA DEL VIDEO REAL
-    videoFinal.src = "assets/video/video1.mp4";
-    videoFinal.poster = "assets/images/foto10.jpeg";
-    
-    videoFinal.onerror = () => {
-        videoFinal.style.objectFit = "contain";
-        const fallbackDiv = document.createElement("div");
-        fallbackDiv.style.cssText = `
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: linear-gradient(135deg, #9b59b6, #6c3483);
-            color: white;
-            font-family: 'Cormorant Garamond', serif;
-            text-align: center;
-            padding: 1rem;
-            flex-direction: column;
-        `;
-        fallbackDiv.innerHTML = "💜<br><br>Mensaje Especial<br><br>Te quiero mucho! 💜";
-        videoFinal.parentNode?.insertBefore(fallbackDiv, videoFinal);
-    };
-    
+    // Agregar todo al contenedor
+    contenidoContainer.appendChild(posterImg);
     contenidoContainer.appendChild(videoFinal);
     contenidoContainer.appendChild(capaRevelado);
+    
+    // Botón de play personalizado (aparece después de la animación)
+    const playBtn = document.createElement("div");
+    playBtn.innerHTML = "▶";
+    playBtn.style.cssText = `
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 70px;
+        height: 70px;
+        background: linear-gradient(135deg, #9b59b6, #6c3483);
+        border-radius: 50%;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        font-size: 32px;
+        cursor: pointer;
+        z-index: 10;
+        color: white;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        transition: all 0.3s ease;
+    `;
+    playBtn.style.display = "none";
+    contenidoContainer.appendChild(playBtn);
     
     // Pie de la polaroid
     const piePolaroid = document.createElement("div");
@@ -1663,7 +1675,7 @@ function mostrarRevelacionFinal() {
     document.body.appendChild(revelacionContainer);
     document.body.style.overflow = "hidden";
     
-    // Iniciar animación de revelado gradual
+    // ===== INICIAR ANIMACIÓN =====
     setTimeout(() => {
         capaRevelado.style.transition = "all 2s ease-in-out";
         capaRevelado.style.clipPath = "inset(100% 0 0 0)";
@@ -1672,43 +1684,138 @@ function mostrarRevelacionFinal() {
             textoRevelado.style.opacity = "0";
         }, 500);
         
-        setTimeout(() => {
-            videoFinal.style.opacity = "1";
-        }, 1500);
-        
+        // Cuando la animación termina, mostrar el poster y el botón de play
         setTimeout(() => {
             capaRevelado.style.opacity = "0";
             setTimeout(() => {
                 if (capaRevelado && capaRevelado.parentNode) {
-                    capaRevelado.remove();
+                    capaRevelado.remove(); // Eliminar la capa de revelado
                 }
-                videoFinal.play().catch(() => {
-                    const playHint = document.createElement("div");
-                    playHint.style.cssText = `
-                        position: absolute;
-                        bottom: 10px;
-                        left: 50%;
-                        transform: translateX(-50%);
-                        background: rgba(0,0,0,0.6);
-                        color: white;
-                        padding: 5px 12px;
-                        border-radius: 20px;
-                        font-size: 0.7rem;
-                        z-index: 5;
-                        pointer-events: none;
-                    `;
-                    playHint.textContent = "▶ Haz clic para reproducir";
-                    contenidoContainer.appendChild(playHint);
-                    setTimeout(() => playHint.remove(), 3000);
-                });
+                // Mostrar el botón de play
+                playBtn.style.display = "flex";
+                
+                // Hacer un pequeño efecto de pulso en el botón
+                playBtn.style.animation = "pulse 1.5s ease-in-out 3";
+                
+                // Agregar mensaje de instrucción
+                const instruccion = document.createElement("div");
+                instruccion.innerHTML = "🎬 Toca para reproducir el video";
+                instruccion.style.cssText = `
+                    position: absolute;
+                    bottom: 10px;
+                    left: 50%;
+                    transform: translateX(-50%);
+                    background: rgba(0,0,0,0.6);
+                    color: white;
+                    padding: 5px 12px;
+                    border-radius: 20px;
+                    font-size: 11px;
+                    z-index: 15;
+                    white-space: nowrap;
+                    pointer-events: none;
+                `;
+                contenidoContainer.appendChild(instruccion);
+                setTimeout(() => instruccion.remove(), 4000);
             }, 300);
         }, 2000);
     }, 500);
     
-    // Cerrar la ventana de revelación (polaroid con video)
+    // ===== FUNCIÓN PARA REPRODUCIR EL VIDEO =====
+    function reproducirVideo() {
+        // Ocultar el poster y el botón
+        posterImg.style.opacity = "0";
+        playBtn.style.display = "none";
+        
+        // Mostrar el video
+        videoFinal.style.opacity = "1";
+        
+        // Cargar y reproducir
+        videoFinal.preload = "auto";
+        videoFinal.load();
+        
+        setTimeout(() => {
+            videoFinal.play().catch(error => {
+                console.log("Error al reproducir:", error);
+                // Si falla, mostrar mensaje
+                const errorMsg = document.createElement("div");
+                errorMsg.innerHTML = "Toca el video para reproducir";
+                errorMsg.style.cssText = `
+                    position: absolute;
+                    bottom: 10px;
+                    left: 50%;
+                    transform: translateX(-50%);
+                    background: rgba(0,0,0,0.7);
+                    color: white;
+                    padding: 5px 12px;
+                    border-radius: 20px;
+                    font-size: 11px;
+                    z-index: 20;
+                `;
+                contenidoContainer.appendChild(errorMsg);
+                setTimeout(() => errorMsg.remove(), 3000);
+            });
+        }, 100);
+    }
+    
+    // Evento para reproducir al tocar el botón
+    playBtn.onclick = (e) => {
+        e.stopPropagation();
+        reproducirVideo();
+    };
+    
+    // También permitir tocar el contenedor para reproducir (si no hay video reproduciéndose)
+    contenidoContainer.onclick = (e) => {
+        if (e.target === playBtn || playBtn.contains(e.target)) return;
+        if (videoFinal.style.opacity !== "1") {
+            reproducirVideo();
+        } else if (videoFinal.paused) {
+            videoFinal.play();
+        } else {
+            videoFinal.pause();
+            // Mostrar botón de play temporal
+            const tempPlay = document.createElement("div");
+            tempPlay.innerHTML = "▶";
+            tempPlay.style.cssText = `
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                width: 50px;
+                height: 50px;
+                background: rgba(155, 89, 182, 0.8);
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 24px;
+                color: white;
+                z-index: 20;
+                pointer-events: none;
+                animation: fadeOut 0.8s ease forwards;
+            `;
+            contenidoContainer.appendChild(tempPlay);
+            setTimeout(() => tempPlay.remove(), 800);
+        }
+    };
+    
+    // Agregar la animación de fadeOut al CSS
+    if (!document.querySelector('#fadeOutAnimation')) {
+        const style = document.createElement('style');
+        style.id = 'fadeOutAnimation';
+        style.textContent = `
+            @keyframes fadeOut {
+                0% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+                100% { opacity: 0; transform: translate(-50%, -50%) scale(1.5); }
+            }
+        `;
+        document.head.appendChild(style);
+    }
+    
+    // Cerrar la ventana
     function cerrarRevelacion() {
         if (videoFinal) {
             videoFinal.pause();
+            videoFinal.src = "";
         }
         revelacionContainer.remove();
         document.body.style.overflow = "";
@@ -1716,21 +1823,21 @@ function mostrarRevelacionFinal() {
     
     closeRevelacionBtn.addEventListener("click", cerrarRevelacion);
     
-    // Cerrar también al hacer clic fuera del polaroid
     revelacionContainer.addEventListener("click", (e) => {
         if (e.target === revelacionContainer) {
             cerrarRevelacion();
         }
     });
     
-    // Efecto hover en polaroid
-    polaroid.addEventListener("mouseenter", () => {
-        polaroid.style.transform = "rotate(0deg) scale(1.02)";
-        polaroid.style.transition = "transform 0.3s ease";
-    });
-    polaroid.addEventListener("mouseleave", () => {
-        polaroid.style.transform = "rotate(2deg) scale(1)";
-    });
+    // Efecto hover en polaroid (solo PC, no afecta móviles)
+    if (!esMovil) {
+        polaroid.addEventListener("mouseenter", () => {
+            polaroid.style.transform = "rotate(0deg) scale(1.02)";
+        });
+        polaroid.addEventListener("mouseleave", () => {
+            polaroid.style.transform = "rotate(2deg) scale(1)";
+        });
+    }
 }
 
 /**
