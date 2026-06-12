@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Feliz Cumpleaños Yarel ❤️</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Fondo dinámico morado -->
+    <div class="bg-layer" aria-hidden="true">
+        <div class="bg-gradient"></div>
+        <div class="stars-container" id="starsContainer"></div>
+        <div class="floating-circles" id="floatingCircles"></div>
+    </div>
+
+    <!-- PANTALLA DE BIENVENIDA CON MÚSICA -->
+    <section id="screenWelcome" class="screen active">
+        <div class="welcome-content">
+            <div class="welcome-header">
+                <div class="cake-icon">🎂</div>
+                <h1 class="main-title">🎈 Feliz Cumpleaños <span class="name-highlight">Yarel</span> 🎈</h1>
+                <p class="main-subtitle">He preparado algo muy especial para ti</p>
+                <p class="instruction-text">Elige la canción que acompañará este momento mágico</p>
+            </div>
+            <div class="songs-grid" id="songsGrid"></div>
+            <div class="continue-wrapper">
+                <button id="btnContinue" class="btn-continue" disabled>
+                    <span class="btn-text">✨ Abrir mi regalo especial ✨</span>
+                    <span class="btn-shimmer"></span>
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- SOBRE (CARTA CERRADA) -->
+    <section id="screenEnvelope" class="screen">
+        <div class="envelope-scene">
+            <p class="envelope-hint">🌸 Haz clic en el sobre para abrirlo 🌸</p>
+            <div class="envelope-wrapper" id="envelopeWrapper" role="button" tabindex="0">
+                <div class="envelope" id="envelope">
+                    <div class="env-back-flap"></div>
+                    <div class="env-body">
+                        <div class="env-body-left"></div>
+                        <div class="env-body-right"></div>
+                        <div class="env-body-bottom"></div>
+                    </div>
+                    <div class="env-seal" id="envSeal">
+                        <span class="seal-heart">💜</span>
+                    </div>
+                    <div class="env-front-flap" id="envFrontFlap"></div>
+                    <div class="env-letter" id="envLetter">
+                        <span class="letter-icon">💜</span>
+                    </div>
+                </div>
+            </div>
+            <div class="sparkles-container" id="envelopeSparkles"></div>
+        </div>
+    </section>
+
+    <!-- CONTENIDO PRINCIPAL CON MENÚ HAMBURGUESA -->
+    <section id="screenMain" class="screen">
+        <!-- Confeti -->
+        <div id="confettiContainer" class="confetti-container"></div>
+
+        <div class="main-container">
+            <!-- Botón Hamburguesa -->
+            <div class="hamburger-menu" id="hamburgerMenu">
+                <div class="hamburger-icon" id="hamburgerIcon">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+                <div class="menu-overlay" id="menuOverlay"></div>
+            </div>
+
+            <!-- Menú de pestañas (oculto inicialmente) -->
+            <div class="tabs-container" id="tabsContainer">
+                <button class="tab-btn active" data-tab="tab3">
+                    <span class="tab-icon">💜</span>
+                    <span>Para Ti</span>
+                </button>
+                <button class="tab-btn" data-tab="tab2">
+                    <span class="tab-icon">⚖️</span>
+                    <span>Tribunal de la Relación</span>
+                </button>
+                <button class="tab-btn" data-tab="tab1">
+                    <span class="tab-icon">🎂</span>
+                    <span>Mensaje Especial</span>
+                </button>
+            </div>
+
+            <!-- Pestaña 1: Para Ti -->
+            <div class="tab-content active" id="tab3">
+                <div class="welcome-message-card">
+                    <div class="welcome-message-content">
+                        <span class="welcome-emoji">🎉</span>
+                        <h2>¡Yarel, bienvenida a tu rincón especial!</h2>
+                        <p>Sabes, he estado pensando... ¿cómo es posible que exista alguien tan hermosa, inteligente e increíble como tú?</p>
+                        <p>Hoy serás <strong>jueza, acusada y veredicto final</strong> en tu propio tribunal.</p>
+                        <p class="humor-text">🎭 <em>Advertencia: El chocolate y los abrazos serán usados como evidencia en tu contra... o a tu favor.</em> 🎭</p>
+                        <p><strong>¿Aceptas el reto?</strong></p>
+                    </div>
+                    <button class="pulse-btn" id="goToQuizBtn">
+                        <span>🎮 Ir al Tribunal de la Relación 🎮</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Pestaña 2: Tribunal de la Relación -->
+            <div class="tab-content" id="tab2">
+                <div class="surprise-card">
+                    <h3>⚖️ Reto Jurídico ⚖️</h3>
+                    <p class="game-intro">Responde estas preguntas y descubre tu veredicto</p>
+
+                    <div class="quiz-container" id="quizContainer">
+                        <div class="quiz-question" id="quizQuestion"></div>
+                        <div class="quiz-options" id="quizOptions"></div>
+                        <div class="quiz-feedback" id="quizFeedback"></div>
+                    </div>
+                </div>
+
+                <!-- SECCIÓN DE VEREDICTO (oculta inicialmente) -->
+                <div class="verdict-card hidden-verdict" id="verdictCard">
+                    <h3>⚖️ Veredicto</h3>
+                    <p class="verdict-intro">¡Felicidades! Has completado el reto. Ahora descubre tu veredicto oficial</p>
+                    <button class="verdict-btn" id="verdictBtn">📜 Conocer mi veredicto 📜</button>
+                </div>
+            </div>
+
+            <!-- Pestaña 3: Mensaje Especial -->
+            <div class="tab-content" id="tab1">
+                <div class="message-card">
+                    <div class="message-header">
+                        <span class="message-emoji">💌</span>
+                        <h2>Mi amor</h2>
+                    </div>
+                    <div class="message-text" id="messageText"></div>
+                    <div class="signature">Con amor, tu ingeniero 💜</div>
+                </div>
+
+                <div class="wishes-card hidden-wishes" id="wishesCard">
+                    <h3>Un mensaje desde la distancia 🌟</h3>
+                    <div class="sad-message">
+                        <p>Hay algo que me duele el día de hoy...</p>
+                        <p>No poder estar a tu lado, verte sonreír en persona, darte un abrazo y robarte un pedazo de pastel.</p>
+                        <p>Me duele no poder celebrar contigo como me gustaría, no poder ver cómo tus ojos lindos brillan.</p>
+                        <p class="sad-emphasis">Pero aunque la distancia nos separe físicamente...</p>
+                        <p>Mi corazón está ahí contigo, celebrando cada segundo de tu día especial.</p>
+                        <p>Por eso, te he preparado un regalo visual... un mosaico con momentos especiales que atesoro.</p>
+                        <p><strong>Porque mereces revivirlos hoy, en tu día. 💜</strong></p>
+                    </div>
+                    <button class="pulse-btn mosaic-pulse-btn" id="shareBtn">
+                        <span>Momentos Especiales 💜</span>
+                    </button>
+                </div>
+
+                <!-- CONTENEDOR DEL MOSAICO (se muestra al hacer clic) -->
+                <div class="mosaic-container" id="mosaicContainer" style="display: none;">
+                    <div class="mosaic-overlay">
+                        <div class="mosaic-content">
+                            <button class="mosaic-close" id="mosaicCloseBtn">✖</button>
+                            <h3 class="mosaic-title">✨ Momentos especiales contigo ✨</h3>
+                            <div class="mosaic-grid" id="mosaicGrid"></div>
+                            <div class="mosaic-message">
+                                <p>Cada foto, cada recuerdo, cada momento a tu lado es único.</p>
+                                <p>Gracias por permitirme ser parte de tu historia. 💜</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Modal de Veredicto (ventana emergente) -->
+    <div class="verdict-modal" id="verdictModal" style="display: none;">
+        <div class="verdict-modal-content">
+            <div class="verdict-modal-header">
+                <span class="verdict-modal-icon" id="verdictModalIcon">⚖️</span>
+                <button class="verdict-modal-close" id="verdictModalClose">✖</button>
+            </div>
+            <div class="verdict-modal-body">
+                <p id="verdictModalText"></p>
+            </div>
+            <div class="verdict-modal-footer">
+                <button class="verdict-modal-btn" id="verdictModalBtn">📜 Continuar 📜</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- REPRODUCTOR FIJO EN EL FOOTER -->
+    <div id="floatingPlayer" class="floating-player">
+        <div class="player-inner">
+            <div class="player-info">
+                <span class="player-note">🎵</span>
+                <div>
+                    <div class="player-song-name" id="playerSongName">---</div>
+                    <div class="player-artist-name" id="playerArtistName">---</div>
+                </div>
+            </div>
+            <div class="player-controls">
+                <button class="player-btn" id="playerPrev">⏮</button>
+                <button class="player-btn player-play-pause" id="playerPlayPause">⏸</button>
+                <button class="player-btn" id="playerNext">⏭</button>
+            </div>
+            <div class="player-progress-wrap">
+                <div class="player-progress-bar">
+                    <div class="player-progress-fill" id="playerProgressFill"></div>
+                </div>
+            </div>
+            <div class="player-volume-wrap">
+                <span>🔊</span>
+                <input type="range" class="player-volume" id="playerVolume" min="0" max="1" step="0.01" value="1">
+            </div>
+        </div>
+    </div>
+
+    <audio id="audioPlayer"></audio>
+    <script src="script.js"></script>
+</body>
+</html>
