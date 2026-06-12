@@ -1497,6 +1497,16 @@ function mostrarModalExito() {
 function mostrarRevelacionFinal() {
     const esMovil = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
     
+    // ===== CONFIGURACIÓN DE CLOUDINARY =====
+    const CLOUD_NAME = "duuletuej";
+    const VIDEO_ID = "l2nicjm8qjkojortos9x";
+    
+    // URL optimizada del video (se ajusta automáticamente a móviles)
+    const videoUrl = `https://res.cloudinary.com/${CLOUD_NAME}/video/upload/f_auto,q_auto,w_auto,c_limit/${VIDEO_ID}.mp4`;
+    
+    // URL del póster (imagen de portada del video)
+    const posterUrl = `https://res.cloudinary.com/${CLOUD_NAME}/video/upload/f_auto,q_auto,w_auto,c_limit/so_0/${VIDEO_ID}.jpg`;
+    
     // Crear contenedor
     const revelacionContainer = document.createElement("div");
     revelacionContainer.className = "revelacion-container";
@@ -1552,7 +1562,7 @@ function mostrarRevelacionFinal() {
         width: 400px;
     `;
     
-    // Contenedor del contenido (imagen o video)
+    // Contenedor del contenido
     const contenidoContainer = document.createElement("div");
     contenidoContainer.style.cssText = `
         position: relative;
@@ -1564,9 +1574,9 @@ function mostrarRevelacionFinal() {
         cursor: pointer;
     `;
     
-    // ===== POSTER (imagen estática durante la animación) =====
+    // ===== POSTER (imagen desde Cloudinary) =====
     const posterImg = document.createElement("img");
-    posterImg.src = "assets/images/poster-video.jpg";
+    posterImg.src = posterUrl;
     posterImg.style.cssText = `
         width: 100%;
         height: 100%;
@@ -1577,7 +1587,7 @@ function mostrarRevelacionFinal() {
         z-index: 1;
     `;
     
-    // ===== VIDEO (se crea pero no se reproduce hasta después de la animación) =====
+    // ===== VIDEO DESDE CLOUDINARY =====
     const videoFinal = document.createElement("video");
     videoFinal.className = "video-revelacion";
     videoFinal.style.cssText = `
@@ -1592,13 +1602,13 @@ function mostrarRevelacionFinal() {
         z-index: 2;
     `;
     
-    // Configuración del video
+    // Configuración del video optimizada
     videoFinal.controls = true;
     videoFinal.playsInline = true;
-    videoFinal.preload = "metadata"; // Solo carga metadatos, no el video completo
-    videoFinal.src = "assets/video/video1.mp4";
+    videoFinal.preload = "metadata";
+    videoFinal.src = videoUrl;  // ✅ Video desde Cloudinary
     
-    // ===== CAPA DE REVELADO (animación) =====
+    // ===== CAPA DE REVELADO =====
     const capaRevelado = document.createElement("div");
     capaRevelado.className = "capa-revelado";
     capaRevelado.style.cssText = `
@@ -1632,7 +1642,7 @@ function mostrarRevelacionFinal() {
     contenidoContainer.appendChild(videoFinal);
     contenidoContainer.appendChild(capaRevelado);
     
-    // Botón de play personalizado (aparece después de la animación)
+    // Botón de play personalizado
     const playBtn = document.createElement("div");
     playBtn.innerHTML = "▶";
     playBtn.style.cssText = `
@@ -1684,20 +1694,15 @@ function mostrarRevelacionFinal() {
             textoRevelado.style.opacity = "0";
         }, 500);
         
-        // Cuando la animación termina, mostrar el poster y el botón de play
         setTimeout(() => {
             capaRevelado.style.opacity = "0";
             setTimeout(() => {
                 if (capaRevelado && capaRevelado.parentNode) {
-                    capaRevelado.remove(); // Eliminar la capa de revelado
+                    capaRevelado.remove();
                 }
-                // Mostrar el botón de play
                 playBtn.style.display = "flex";
-                
-                // Hacer un pequeño efecto de pulso en el botón
                 playBtn.style.animation = "pulse 1.5s ease-in-out 3";
                 
-                // Agregar mensaje de instrucción
                 const instruccion = document.createElement("div");
                 instruccion.innerHTML = "🎬 Toca para reproducir el video";
                 instruccion.style.cssText = `
@@ -1722,21 +1727,16 @@ function mostrarRevelacionFinal() {
     
     // ===== FUNCIÓN PARA REPRODUCIR EL VIDEO =====
     function reproducirVideo() {
-        // Ocultar el poster y el botón
         posterImg.style.opacity = "0";
         playBtn.style.display = "none";
-        
-        // Mostrar el video
         videoFinal.style.opacity = "1";
         
-        // Cargar y reproducir
         videoFinal.preload = "auto";
         videoFinal.load();
         
         setTimeout(() => {
             videoFinal.play().catch(error => {
                 console.log("Error al reproducir:", error);
-                // Si falla, mostrar mensaje
                 const errorMsg = document.createElement("div");
                 errorMsg.innerHTML = "Toca el video para reproducir";
                 errorMsg.style.cssText = `
@@ -1757,13 +1757,12 @@ function mostrarRevelacionFinal() {
         }, 100);
     }
     
-    // Evento para reproducir al tocar el botón
+    // Eventos
     playBtn.onclick = (e) => {
         e.stopPropagation();
         reproducirVideo();
     };
     
-    // También permitir tocar el contenedor para reproducir (si no hay video reproduciéndose)
     contenidoContainer.onclick = (e) => {
         if (e.target === playBtn || playBtn.contains(e.target)) return;
         if (videoFinal.style.opacity !== "1") {
@@ -1772,7 +1771,6 @@ function mostrarRevelacionFinal() {
             videoFinal.play();
         } else {
             videoFinal.pause();
-            // Mostrar botón de play temporal
             const tempPlay = document.createElement("div");
             tempPlay.innerHTML = "▶";
             tempPlay.style.cssText = `
@@ -1798,7 +1796,7 @@ function mostrarRevelacionFinal() {
         }
     };
     
-    // Agregar la animación de fadeOut al CSS
+    // Animación fadeOut
     if (!document.querySelector('#fadeOutAnimation')) {
         const style = document.createElement('style');
         style.id = 'fadeOutAnimation';
@@ -1811,7 +1809,7 @@ function mostrarRevelacionFinal() {
         document.head.appendChild(style);
     }
     
-    // Cerrar la ventana
+    // Cerrar ventana
     function cerrarRevelacion() {
         if (videoFinal) {
             videoFinal.pause();
@@ -1829,7 +1827,7 @@ function mostrarRevelacionFinal() {
         }
     });
     
-    // Efecto hover en polaroid (solo PC, no afecta móviles)
+    // Efecto hover solo en PC
     if (!esMovil) {
         polaroid.addEventListener("mouseenter", () => {
             polaroid.style.transform = "rotate(0deg) scale(1.02)";
